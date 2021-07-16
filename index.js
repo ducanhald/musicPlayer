@@ -8,6 +8,8 @@ const cd = $('.cd')
 const playBtn = $('.btn-toggle-play')
 const player = $('.player')
 const progress = $('#progress')
+const nextBtn = $('.btn-next')
+const prevBtn = $('.btn-prev')
 
 var app = {
     currentIndex: 0,
@@ -21,7 +23,7 @@ var app = {
         {
             name: 'Trốn tìm',
             singer: 'Đen Vâu',
-            path: './music/DenVauCamOn.mp3',
+            path: './music/Trontim.mp3',
             img: './img/denvau.png',
         },
         {
@@ -66,6 +68,14 @@ var app = {
         const _this = this
 
         const cdwidth = cd.offsetWidth
+            // Xử lý CD quay và Dừng
+        const CdThumbAnimate = cdThumb.animate([{
+            transform: 'rotate(360deg)'
+        }], {
+            duration: 8000,
+            iterations: Infinity
+        })
+        CdThumbAnimate.pause()
             //Xử lý phóng thu CD
         document.onscroll = function() {
                 const scrollTop = document.documentElement.scrollTop
@@ -85,11 +95,13 @@ var app = {
         audio.onplay = function() {
                 _this.isPlaying = true
                 player.classList.add('playing')
+                CdThumbAnimate.play()
             }
             //Khi song bị pause
         audio.onpause = function() {
                 _this.isPlaying = false
                 player.classList.remove('playing')
+                CdThumbAnimate.pause()
             }
             //Khi thay đổi tiến độ song
         audio.ontimeupdate = function() {
@@ -100,9 +112,19 @@ var app = {
 
             }
             // Xử lý tua song 
-        progress.onchange = function(e) {
-            const seekTime = audio.duration / 100 * e.target.value
-            audio.currentTime = seekTime
+        progress.oninput = function(e) {
+                const seekTime = audio.duration / 100 * e.target.value
+                audio.currentTime = seekTime
+
+            }
+            // Nest and Prev bài hát
+        nextBtn.onclick = function() {
+            _this.nextSong()
+            audio.play()
+        }
+        prevBtn.onclick = function() {
+            _this.prevSong()
+            audio.play()
         }
     },
 
@@ -129,6 +151,22 @@ var app = {
         heading.textContent = this.currentSong.name
         cdThumb.style.background = `url('${this.currentSong.img}')`
         audio.src = this.currentSong.path
+
+    },
+    nextSong: function() {
+        this.currentIndex++
+            if (this.currentIndex >= this.songs.length) {
+                this.currentIndex = 0
+            }
+        this.loadCurrentSong()
+
+    },
+    prevSong: function() {
+        this.currentIndex--
+            if (this.currentIndex < 0) {
+                this.currentIndex = this.songs.length - 1
+            }
+        this.loadCurrentSong()
 
     },
     start: function() {
