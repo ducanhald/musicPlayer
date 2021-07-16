@@ -10,10 +10,12 @@ const player = $('.player')
 const progress = $('#progress')
 const nextBtn = $('.btn-next')
 const prevBtn = $('.btn-prev')
+const randomBtn = $('.btn-random')
 
 var app = {
     currentIndex: 0,
     isPlaying: false,
+    isRandom: false,
     songs: [{
             name: 'Cảm ơn',
             singer: 'Đen',
@@ -119,12 +121,24 @@ var app = {
             }
             // Nest and Prev bài hát
         nextBtn.onclick = function() {
-            _this.nextSong()
+            if (_this.isRandom) {
+                _this.randomSong()
+            } else {
+                _this.nextSong()
+            }
             audio.play()
         }
         prevBtn.onclick = function() {
-            _this.prevSong()
+            if (_this.isRandom) {
+                _this.randomSong()
+            } else {
+                _this.prevSong()
+            }
             audio.play()
+        }
+        randomBtn.onclick = function() {
+            _this.isRandom = !_this.isRandom
+            randomBtn.classList.toggle('active', _this.isRandom)
         }
     },
 
@@ -168,6 +182,14 @@ var app = {
             }
         this.loadCurrentSong()
 
+    },
+    randomSong: function() {
+        let newIndex
+        do {
+            newIndex = Math.floor(Math.random() * this.songs.length)
+        } while (newIndex === this.currentIndex)
+        this.currentIndex = newIndex
+        this.loadCurrentSong()
     },
     start: function() {
         // Định nghĩa các thuộc tính cho Object

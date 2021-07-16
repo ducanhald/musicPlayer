@@ -99,7 +99,8 @@ header h2 {
 }
 
 .control .btn.active {
-    color: var(--primary-color);
+    color: purple;
+    background-color: ;
 }
 
 .control .btn-toggle-play {
